@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Web_BTL.DataAccessLayer.Models {
     public class CustomerModel : UserModel {
+
+        public CustomerModel() {
+            Reviews = new HashSet<ReviewModel>();
+        }
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int CustomerId { get; set; }

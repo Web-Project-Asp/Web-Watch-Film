@@ -1,13 +1,17 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Web_BTL.BusinessLogicLayer.Services;
+using Web_BTL.DataAccessLayer;
 using Web_BTL.DataAccessLayer.Models;
 
 namespace Web_BTL.BusinessLogicLayer.Controllers {
     public class AccountController : Controller {
         private readonly IAccountService _accountService;
+        DBXemPhimContext _dataContext ;
 
-        public AccountController(IAccountService accountService) {
+        public AccountController(IAccountService accountService, DBXemPhimContext dBXemPhimContext) {
             _accountService = accountService;
+            _dataContext = dBXemPhimContext;
         }
 
         [HttpGet]
@@ -37,19 +41,40 @@ namespace Web_BTL.BusinessLogicLayer.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> SignUp(CustomerModel model) {
-            if (!ModelState.IsValid) {
-             Console.WriteLine("signup1");
-                return View(model);
-            }
+            if (ModelState.IsValid) {
+                var admin = await _dataContext.Admins.FirstOrDefaultAsync(a => a.UserEmail == model.UserEmail || a.UserLogin == model.UserLogin);
+                var customer = await _dataContext.Customers.FirstOrDefaultAsync(c => c.UserEmail == model.UserEmail || c.UserLogin == model.UserLogin);
 
-            var (success, errorMessage) = await _accountService.SignUpAsync(model);
-            if (success) {
-                Console.WriteLine("signup2");
-                return RedirectToAction(nameof(Index), "Home");
-            }
+                if (admin != null || customer != null) {
+                    ModelState.AddModelError(string.Empty, "Email hoặc tên đăng nhập đã tồn tại");
+                    return View(model);
+                }
 
-            ModelState.AddModelError(string.Empty, errorMessage);
-            Console.WriteLine("signup3");
+                // Set default values for new customer
+                model.UserImagePath = "default.jpg";
+                model.UserState = true;
+              
+                model.UserCreateDate = DateTime.Now;
+
+                // Add customer directly to database
+                _dataContext.Customers.Add(model);
+                await _dataContext.SaveChangesAsync();
+
+                // Create and associate a watchlist
+                var watchList = new WatchListModel {
+                    CustomerId = model.CustomerId
+                };
+                _dataContext.WatchLists.Add(watchList);
+                await _dataContext.SaveChangesAsync();
+
+                // Update customer with watchlist ID
+                model.WatchListId = watchList.WatchListId;
+                await _dataContext.SaveChangesAsync();
+
+                // Redirect to sign in page after successful registration
+                TempData["SuccessMessage"] = "Đăng ký thành công! Vui lòng đăng nhập.";
+                return RedirectToAction(nameof(SignIn));
+            }
             return View(model);
         }
 
