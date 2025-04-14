@@ -13,15 +13,7 @@
 <div class="e-container" id="signup">
     <h1 class="form-title">Register</h1>
     <form method="post" asp-controller="Account" asp-action="SignUp" id="rForm">
-        @*@if (!ViewData.ModelState.IsValid)
-        {
-            <div class="alert alert-danger">
-                @foreach(var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    <p>@error.ErrorMessage</p>
-                }
-            </div>
-        }*@
+      
         @if (!ViewData.ModelState.IsValid)
         {
             <div id="toast" class="toast">
@@ -41,10 +33,10 @@
                 <input asp-for="UserEmail" class="e-email" placeholder="Email" required>
             </div>
             <div class="input-group">
-                <input type="text" id="password" class="e-password" asp-for="LoginPassword" placeholder="Password" />
+                <input type="password" id="password" class="e-password" asp-for="LoginPassword" placeholder="Password" />
             </div>
             <div class="input-group">
-                <input type="text" id="rpassword" class="e-password" placeholder="Re-fill Password" />
+                <input type="password" id="rpassword" class="e-password" placeholder="Re-fill Password" />
             </div>
             <div id="signUpMessage" class="messageDiv" style="display:none;"></div>
         </div>

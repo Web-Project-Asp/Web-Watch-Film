@@ -38,15 +38,18 @@ namespace Web_BTL.BusinessLogicLayer.Controllers {
         [HttpPost]
         public async Task<IActionResult> SignUp(CustomerModel model) {
             if (!ModelState.IsValid) {
+             Console.WriteLine("signup1");
                 return View(model);
             }
 
             var (success, errorMessage) = await _accountService.SignUpAsync(model);
             if (success) {
+                Console.WriteLine("signup2");
                 return RedirectToAction(nameof(Index), "Home");
             }
 
             ModelState.AddModelError(string.Empty, errorMessage);
+            Console.WriteLine("signup3");
             return View(model);
         }
 

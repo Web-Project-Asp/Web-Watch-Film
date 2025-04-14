@@ -2,6 +2,10 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Web_BTL.DataAccessLayer.Models;
 using Web_BTL.DataAccessLayer.Repository;
+using System;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Web_BTL.BusinessLogicLayer.Services {
     public class AdminService : IAdminService {
@@ -75,11 +79,11 @@ namespace Web_BTL.BusinessLogicLayer.Services {
             media.MediaAgeRating = model.MediaAgeRating;
 
             if (image != null && image.Length > 0)
-                media.MediaImagePath = await _save.SaveImageAsync(_environment, "images/medias", "", media.MediaName, image);
+                media.MediaImagePath = await _save.SaveImageAsync(_environment, "images/medias", "", Normalize(media.MediaName), image);
             if (banner != null && banner.Length > 0)
-                media.MediaBannerPath = await _save.SaveImageAsync(_environment, "images/banners", "", media.MediaName + "banner", banner);
+                media.MediaBannerPath = await _save.SaveImageAsync(_environment, "images/banners", "", Normalize(media.MediaName) + "banner", banner);
             if (video != null && video.Length > 0) {
-                var result = await _save.SaveVideoAsync(_environment, "videos", "", media.MediaName + media.MediaQuality, video, true);
+                var result = await _save.SaveVideoAsync(_environment, "videos", "", Normalize(media.MediaName) + media.MediaQuality, video, true);
                 media.MediaUrl = result.videoName;
                 media.MediaDuration = result.duration;
             }
@@ -223,6 +227,25 @@ namespace Web_BTL.BusinessLogicLayer.Services {
                 Text = a.ActorName,
                 Value = a.ActorID.ToString()
             }).ToList();
+        }
+
+        private static string Normalize(string input) {
+
+            // Chuẩn hóa Unicode và tách dấu
+            string normalized = input.Normalize(NormalizationForm.FormD);
+            StringBuilder sb = new StringBuilder();
+
+            foreach (char c in normalized) {
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (uc != UnicodeCategory.NonSpacingMark) {
+                    sb.Append(c);
+                }
+            }
+
+            // Loại bỏ ký tự đặc biệt, chỉ giữ chữ cái và số
+            string result = Regex.Replace(sb.ToString(), @"[^a-z0-9]", "");
+
+            return result;
         }
     }
 }

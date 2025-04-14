@@ -27,8 +27,12 @@
                 @foreach (var item in Model)
                 {
                     <a class="t-movie" href="#">
-
-                        <img src="@Url.Content("../../images/medias/" + @item.MediaImagePath)" alt="@item.MediaName">
+                        <form asp-action="Index" asp-controller="Movie" method="post">
+                            <input type="hidden" name="movieId" value="@item.MediaId" />
+                            <button type="submit" style="border:none; background:none;">
+                                <img src="@Url.Content("../../images/medias/" + @item.MediaImagePath)" alt="@item.MediaName">
+                            </button>
+                        </form>
 
                         <div class="t-movie-content">
                             <div class="t-movie-title">@item.MediaName</div>
