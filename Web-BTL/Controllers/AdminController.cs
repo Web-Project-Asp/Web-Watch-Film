@@ -31,26 +31,29 @@ namespace Web_BTL.BusinessLogicLayer.Controllers {
 
             // Tạo ViewBag chứa danh sách thể loại để hiển thị trong form
             ViewBag.AllGenres = _adminService.GetGenreSelectList();
+            ViewBag.AllActors = _adminService.GetActorSelectList();
             return View(); // Trả về View để thêm media
         }
 
         // Xử lý thêm media mới (POST)
         [HttpPost]
-        public async Task<IActionResult> AddMedia(MediaModel media, IFormFile image, IFormFile banner, IFormFile video, List<int> SelectedGenreId) {
+        public async Task<IActionResult> AddMedia(MediaModel media, IFormFile image, IFormFile banner, IFormFile video, List<int> SelectedGenreId, List<int> selectedActorIds, List<int> selectedActorMainIds) {
             // Kiểm tra tính hợp lệ của dữ liệu đầu vào
             if (!ModelState.IsValid) {
                 ViewBag.AllGenres = _adminService.GetGenreSelectList(); // Tải lại danh sách thể loại nếu lỗi
+                ViewBag.AllActors = _adminService.GetActorSelectList();
                 return View(media); // Trả về View với dữ liệu đã nhập để sửa lỗi
             }
 
             // Gọi tầng nghiệp vụ để thêm media
-            var (success, errorMessage, updatedMedia) = await _adminService.AddMediaAsync(media, image, banner, video, SelectedGenreId);
+            var (success, errorMessage, updatedMedia) = await _adminService.AddMediaAsync(media, image, banner, video, SelectedGenreId, selectedActorIds, selectedActorMainIds);
             if (success)
                 return RedirectToAction("Index"); // Chuyển hướng về trang danh sách nếu thành công
 
             // Nếu thất bại, hiển thị thông báo lỗi
             ModelState.AddModelError(string.Empty, errorMessage);
             ViewBag.AllGenres = _adminService.GetGenreSelectList();
+            ViewBag.AllActors = _adminService.GetActorSelectList();
             return View(media); // Trả về View với thông báo lỗi
         }
 

@@ -30,7 +30,7 @@ namespace Web_BTL.BusinessLogicLayer.Services {
             return await _adminRepository.GetAllMediasAsync();
         }
 
-        public async Task<(bool Success, string ErrorMessage, MediaModel? Media)> AddMediaAsync(MediaModel media, IFormFile? image, IFormFile? banner, IFormFile? video, List<int> selectedGenreIds) {
+        public async Task<(bool Success, string ErrorMessage, MediaModel? Media)> AddMediaAsync(MediaModel media, IFormFile? image, IFormFile? banner, IFormFile? video, List<int> selectedGenreIds, List<int> selectedActorIds, List<int> selectedActorMainIds) {
             if (!HasPermission(Role.Movie_Management.ToString()))
                 return (false, "Quyền hạn của bạn không đủ", null);
 
@@ -51,6 +51,23 @@ namespace Web_BTL.BusinessLogicLayer.Services {
                 var genre = await _adminRepository.GetGenreByIdAsync(genreId);
                 if (genre != null) media.Genres.Add(genre);
             }
+
+            if (selectedGenreIds.Count > 0) {
+                media.Genres.Clear();
+                foreach (var genreId in selectedGenreIds) {
+                    var genre = await _adminRepository.GetGenreByIdAsync(genreId);
+                    if (genre != null) media.Genres.Add(genre);
+                }
+            }
+
+            foreach (var actorId in selectedActorIds) {
+                await _adminRepository.AddActorMediaAsync(new Actor_MediaModel {
+                    MediaId = media.MediaId,
+                    ActorId = actorId,
+                    IsMain = selectedActorMainIds.Contains(actorId)
+                });
+            }
+
 
             await _adminRepository.AddMediaAsync(media);
             return (true, null, media);
