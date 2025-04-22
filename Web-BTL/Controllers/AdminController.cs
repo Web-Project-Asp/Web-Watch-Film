@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Web_BTL.DataAccessLayer.Models;
 using Web_BTL.BusinessLogicLayer.Services;
+using Web_BTL.Auth;
 
 namespace Web_BTL.BusinessLogicLayer.Controllers {
+    [RoleAuthorize("Admin")] // Chỉ cho phép người dùng có quyền Admin truy cập
     public class AdminController : Controller {
         private readonly IAdminService _adminService; // Dịch vụ xử lý logic nghiệp vụ cho Admin
 

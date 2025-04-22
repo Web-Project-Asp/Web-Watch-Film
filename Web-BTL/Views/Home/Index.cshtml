@@ -35,12 +35,12 @@
 <partial name="Layouts/SpecialMovie" />
 <!-- END SPECIAL MOVIE SECTION -->
 @section Scripts {
+    <script>
+        $("img").click(function (e) {
+            var id = $(this).attr("id");
 
+            window.location.href = "Movie/Index?movieId=" + id;
+        });
+    </script>
 }
-<script>
-    $("img").click(function (e) {
-        var id = $(this).attr("id");
 
-        window.location.href = "Movie/Index?movieId=" + id;
-    });
-</script>

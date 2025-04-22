@@ -1,0 +1,47 @@
+﻿﻿@{
+    ViewData["Title"] = "Access Denied";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            color: #d9534f;
+        }
+
+        p {
+            font-size: 18px;
+            color:black;
+        }
+
+        a.button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+            a.button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <h1>⛔ Truy cập bị từ chối</h1>
+    <p>Bạn không có quyền truy cập vào trang này.</p>
+    <a href="/" class="button">Quay về trang chủ</a>
+</body>
+</html>
