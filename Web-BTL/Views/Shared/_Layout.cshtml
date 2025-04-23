@@ -28,7 +28,6 @@
     <!-- END NAV -->
 
     @RenderBody()
-    @RenderSection("Scripts", required: false)
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <!--FOOTER-->
@@ -45,6 +44,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js" integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw==" crossorigin="anonymous"></script>
     <!-- APP SCRIPT -->
     <script src="~/js/app.js"></script>
+    @RenderSection("Scripts", required: false)
+
     @* <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
 </body>
 </html>

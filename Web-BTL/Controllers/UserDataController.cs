@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Web_BTL.BusinessLogicLayer.Services;
 using Web_BTL.DataAccessLayer;
 using Web_BTL.DataAccessLayer.Models;
 
@@ -11,63 +12,33 @@ namespace Web_BTL.Controllers
     [Route("api/user")]
     public class UserDataController : ControllerBase
     {
-        private readonly DBXemPhimContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICustomerService _customerService;
 
-        public UserDataController(DBXemPhimContext context, IHttpContextAccessor httpContextAccessor)
+        public UserDataController(ICustomerService customerService)
         {
-            _context = context;
-            _httpContextAccessor = httpContextAccessor;
+            _customerService = customerService;
         }
 
-        private int GetCurrentUserId()
-        {
-            var userIdClaim = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier);
-            return int.Parse(userIdClaim.Value);
-        }
+      
 
         // GET: /api/user/favorites
         [HttpGet("favorites")]
-        public IActionResult GetFavoriteMedias()
+        public async Task<List<MediaModel>> GetFavoriteMedias()
         {
-            int userId = GetCurrentUserId();
+            var (success, favoriteMedias) = await _customerService.GetFavoriteMediasAsync();
 
-            var favorites = _context.ListMedia
-                .Include(lm => lm.media)
-                .Include(lm => lm.watchList)
-                .Where(lm => lm.watchList.CustomerId == userId && lm.Favorite == true)
-                .Select(lm => new
-                {
-                    Id = lm.media.MediaId,
-                    Name = lm.media.MediaName,
-                    Description = lm.media.MediaDescription,
-                    Image = lm.media.MediaImagePath,
-                    Url = lm.media.MediaUrl
-                }).ToList();
 
-            return Ok(favorites);
+            return favoriteMedias;
         }
 
         // GET: /api/user/watched
         [HttpGet("watched")]
-        public IActionResult GetWatchedMedias()
+        public async Task<List<MediaModel>> GetWatchedMedias()
         {
-            int userId = GetCurrentUserId();
+            var (success, watchedMedias) = await _customerService.GetWatchedMediasAsync();
 
-            var watched = _context.ListMedia
-                .Include(lm => lm.media)
-                .Include(lm => lm.watchList)
-                .Where(lm => lm.watchList.CustomerId == userId && lm.IsWatched == true)
-                .Select(lm => new
-                {
-                    Id = lm.media.MediaId,
-                    Name = lm.media.MediaName,
-                    Description = lm.media.MediaDescription,
-                    Image = lm.media.MediaImagePath,
-                    Url = lm.media.MediaUrl
-                }).ToList();
 
-            return Ok(watched);
+            return watchedMedias;
         }
     }
 }

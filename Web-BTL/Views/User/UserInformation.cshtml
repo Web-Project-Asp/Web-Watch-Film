@@ -96,9 +96,7 @@
 <div id="list"></div>
 @section Scripts {
     <!-- Thêm jQuery từ CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Đoạn mã của bạn nên được nạp sau jQuery -->
-    <script src="path/to/your/custom/script.js"></script>
     <script>
         $("a").click(function (e) {
             var id = $(this).attr("id");
@@ -125,7 +123,7 @@
             });
         });
         document.addEventListener("DOMContentLoaded", function () {
-            var img = document.getElementById("imfload");
+            var img = document.getElementById("avatarImg");
             img.src = img.src.split("?")[0] + "?v=" + new Date().getTime();
         });
     </script>
